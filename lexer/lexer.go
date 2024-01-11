@@ -33,9 +33,29 @@ func (l *Lexer) NextToken() token.Token {
 
 	switch l.ch {
 	case '=':
-		nextToken = newToken(token.ASSIGN, l.ch)
+		if l.peekChar() == '=' {
+			nextToken = l.makeTwoCharToken(token.EQ)
+		} else {
+			nextToken = newToken(token.ASSIGN, l.ch)
+		}
 	case '+':
 		nextToken = newToken(token.PLUS, l.ch)
+	case '-':
+		nextToken = newToken(token.MINUS, l.ch)
+	case '!':
+		if l.peekChar() == '=' {
+			nextToken = l.makeTwoCharToken(token.NEQ)
+		} else {
+			nextToken = newToken(token.BANG, l.ch)
+		}
+	case '/':
+		nextToken = newToken(token.SLASH, l.ch)
+	case '*':
+		nextToken = newToken(token.ASTERISK, l.ch)
+	case '<':
+		nextToken = newToken(token.LT, l.ch)
+	case '>':
+		nextToken = newToken(token.GT, l.ch)
 	case '(':
 		nextToken = newToken(token.LPAREN, l.ch)
 	case ')':
@@ -80,15 +100,6 @@ func isLetter(ch byte) bool {
 	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
 }
 
-func (l *Lexer) readIdentifier() string {
-	startPosition := l.position
-	for isLetter(l.ch) {
-		l.readChar()
-	}
-
-	return l.input[startPosition:l.position]
-}
-
 func (l *Lexer) skipWhitespace() {
 	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
 		l.readChar()
@@ -99,15 +110,6 @@ func isDigit(ch byte) bool {
 	return '0' <= ch && ch <= '9'
 }
 
-func (l *Lexer) readNumber() string {
-	startPosition := l.position
-	for isDigit(l.ch) {
-		l.readChar()
-	}
-
-	return l.input[startPosition:l.position]
-}
-
 func (l *Lexer) readIdentifierOrLiteral(identifyingFunc func(byte) bool) string {
 	startPosition := l.position
 	for identifyingFunc(l.ch) {
@@ -115,4 +117,19 @@ func (l *Lexer) readIdentifierOrLiteral(identifyingFunc func(byte) bool) string 
 	}
 
 	return l.input[startPosition:l.position]
+}
+
+func (l *Lexer) peekChar() byte {
+	if l.readPosition >= len(l.input) {
+		return 0
+	} else {
+		return l.input[l.readPosition]
+	}
+}
+
+func (l *Lexer) makeTwoCharToken(tokenType token.TokenType) token.Token {
+	token := token.Token{Type: tokenType, Literal: string(l.ch) + string(l.peekChar())}
+	l.readChar()
+
+	return token
 }
