@@ -156,7 +156,7 @@ func (p *Parser) parseLetStatement() ast.Statement {
 }
 
 func (p *Parser) parseReturnStatement() ast.Statement {
-	defer untrace(trace("parseReturnStatement"))
+	// defer untrace(trace("parseReturnStatement"))
 
 	statement := &ast.ReturnStatement{Token: p.curToken}
 	p.nextToken()
@@ -170,7 +170,7 @@ func (p *Parser) parseReturnStatement() ast.Statement {
 }
 
 func (p *Parser) parseExpressionStatement() ast.Statement {
-	defer untrace(trace("parseExpressionStatement"))
+	// defer untrace(trace("parseExpressionStatement"))
 
 	statement := &ast.ExpressionStatement{Token: p.curToken}
 	statement.Expression = p.parseExpression(LOWEST)
@@ -188,7 +188,7 @@ func (p *Parser) noPrefixParseFnError(t token.TokenType) {
 }
 
 func (p *Parser) parseExpression(precedence int) ast.Expression {
-	defer untrace(trace("parseExpression"))
+	// defer untrace(trace("parseExpression"))
 
 	prefix := p.prefixParseFns[p.curToken.Type]
 	if prefix == nil {
@@ -212,7 +212,7 @@ func (p *Parser) parseExpression(precedence int) ast.Expression {
 }
 
 func (p *Parser) parseIntegerLiteral() ast.Expression {
-	defer untrace(trace("parseIntegerLiteral"))
+	// defer untrace(trace("parseIntegerLiteral"))
 
 	statement := &ast.IntegerLiteral{Token: p.curToken}
 
@@ -231,7 +231,7 @@ func (p *Parser) parseIntegerLiteral() ast.Expression {
 
 // p needs to point to the prefix operator
 func (p *Parser) parsePrefixExpression() ast.Expression {
-	defer untrace(trace("parsePrefixExpression"))
+	// defer untrace(trace("parsePrefixExpression"))
 
 	statement := &ast.PrefixExpression{Token: p.curToken, Operator: p.curToken.Literal}
 
@@ -244,7 +244,7 @@ func (p *Parser) parsePrefixExpression() ast.Expression {
 
 // p needs to point to the infix operator
 func (p *Parser) parseInfixExpression(left ast.Expression) ast.Expression {
-	defer untrace(trace("parseInfixExpression"))
+	// defer untrace(trace("parseInfixExpression"))
 
 	statement := &ast.InfixExpression{Token: p.curToken, Operator: p.curToken.Literal, Left: left}
 
